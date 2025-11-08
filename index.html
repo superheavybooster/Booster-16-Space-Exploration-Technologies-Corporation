@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booster 16 Space Exploration Technologies Corporation</title>
     <style>
-        /* ALL YOUR EXISTING CSS STAYS EXACTLY THE SAME */
         * {
             margin: 0;
             padding: 0;
@@ -131,16 +130,21 @@
             transform: rotate(-45deg) translate(7px, -7px);
         }
 
-        #app {
+        .page {
+            display: none;
             position: relative;
             z-index: 10;
             min-height: 100vh;
-            opacity: 1;
-            transition: opacity 0.3s ease;
         }
 
-        #app.fade-out {
-            opacity: 0;
+        .page.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .hero {
@@ -214,7 +218,6 @@
             font-weight: 700;
             font-size: 1.1rem;
             transition: all 0.3s;
-            animation: fadeInUp 1s ease-out 0.4s backwards;
             box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
             cursor: pointer;
             border: none;
@@ -358,19 +361,6 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .mission-badge {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            display: inline-block;
-        }
-
-        .mission-badge.success {
-            background: rgba(102, 126, 234, 0.2);
-        }
-
         .contact-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -422,6 +412,19 @@
 
         .response-time strong {
             color: #667eea;
+        }
+
+        .mission-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .mission-badge.success {
+            background: rgba(102, 126, 234, 0.2);
         }
 
         footer {
@@ -477,12 +480,6 @@
             .page-hero {
                 padding: 10rem 5% 4rem;
             }
-
-            .mission-badge {
-                margin-left: 0;
-                margin-top: 0.5rem;
-                display: block;
-            }
         }
     </style>
 </head>
@@ -490,22 +487,169 @@
     <div class="stars" id="stars"></div>
 
     <nav id="navbar">
-        <div class="logo" onclick="navigateTo('home')">BOOSTER 16</div>
+        <div class="logo" onclick="goToPage('home')">BOOSTER 16</div>
         <div class="menu-toggle" id="menuToggle">
             <span></span>
             <span></span>
             <span></span>
         </div>
         <ul class="nav-links" id="navLinks">
-            <li><a onclick="navigateTo('home')">Home</a></li>
-            <li><a onclick="navigateTo('vehicles')">Vehicles</a></li>
-            <li><a onclick="navigateTo('launches')">Launches</a></li>
-            <li><a onclick="navigateTo('contact')">Contact</a></li>
+            <li><a onclick="goToPage('home')">Home</a></li>
+            <li><a onclick="goToPage('vehicles')">Vehicles</a></li>
+            <li><a onclick="goToPage('launches')">Launches</a></li>
+            <li><a onclick="goToPage('contact')">Contact</a></li>
         </ul>
     </nav>
 
-    <div id="app">
-        <!-- Home page loads here immediately -->
+    <!-- HOME PAGE -->
+    <div id="home-page" class="page active">
+        <section class="hero">
+            <div class="hero-bg"></div>
+            <div class="hero-content">
+                <h1>Beyond the Horizon</h1>
+                <p>Advanced launch solutions for the next era of space exploration</p>
+                <button class="cta-button" onclick="goToPage('contact')">Get in Touch</button>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="section-title">Launch Services</h2>
+            <p class="section-subtitle">Precision. Reliability. Innovation.</p>
+            <div class="cards">
+                <div class="card">
+                    <div class="card-icon">🚀</div>
+                    <h3>Heavy Lift</h3>
+                    <p>Deploy massive payloads to orbit with our next-generation heavy-lift vehicles. Optimized for large satellites, space station modules, and deep space missions.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🛰️</div>
+                    <h3>Satellite Deployment</h3>
+                    <p>Flexible launch windows and precise orbital insertion for communications, Earth observation, and scientific satellites of all sizes.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🌙</div>
+                    <h3>Deep Space Missions</h3>
+                    <p>Enabling exploration beyond Earth orbit with specialized launch profiles for lunar, Mars, and interplanetary missions.</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="section-title">Advanced Rocket Technology</h2>
+            <p class="section-subtitle">Engineering the impossible into reality</p>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <h4>Reusable Systems</h4>
+                    <div class="stat">100%</div>
+                    <p>First-stage recovery rate</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Payload Capacity</h4>
+                    <div class="stat">75t</div>
+                    <p>To low Earth orbit</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Launch Cadence</h4>
+                    <div class="stat">48+</div>
+                    <p>Launches per year</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Propulsion</h4>
+                    <div class="stat">99.8%</div>
+                    <p>Engine reliability</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="section-title">Research & Development</h2>
+            <p class="section-subtitle">Pioneering tomorrow's space technologies</p>
+            <div class="cards">
+                <div class="card">
+                    <div class="card-icon">🔬</div>
+                    <h3>Advanced Propulsion</h3>
+                    <p>Developing next-generation engine technologies including methane-oxygen systems and electric propulsion for deep space exploration.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🤖</div>
+                    <h3>Autonomous Systems</h3>
+                    <p>AI-driven launch sequencing, real-time trajectory optimization, and automated landing systems for maximum precision and safety.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">♻️</div>
+                    <h3>Sustainable Spaceflight</h3>
+                    <p>Researching carbon-neutral propellants, in-orbit refueling technologies, and closed-loop life support systems for long-duration missions.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- VEHICLES PAGE -->
+    <div id="vehicles-page" class="page">
+        <div class="page-hero">
+            <h1>Our Fleet</h1>
+            <p class="section-subtitle">Next-generation launch vehicles engineered for performance</p>
+        </div>
+        <section style="padding-top: 2rem;">
+            <div class="cards">
+                <div class="card">
+                    <div class="card-icon">🚀</div>
+                    <h3>SkyLynx</h3>
+                    <p><strong>Light-Lift Vehicle</strong> The first rocket of our copamny. Capable of getting ~25 tons of payload to orbit.</p>
+                    <div style="margin-top: 1.5rem; color: #667eea; font-weight: 600;">
+                        Height: 41.1m | Diameter: 3m | Engines: 1 On Each Stage
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- LAUNCHES PAGE -->
+    <div id="launches-page" class="page">
+        <div class="page-hero">
+            <h1>Launch Manifest</h1>
+            <p class="section-subtitle">Upcoming missions and recent achievements</p>
+        </div>
+        <section style="padding-top: 2rem;">
+            <div class="cards">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+                        <h3>SkyLynx Flight Test 1</h3>
+                        <span class="mission-badge">Upcoming</span>
+                    </div>
+                    <p style="color: #667eea; margin-bottom: 0.5rem;">November 9, 2025 • Cape Canaveral</p>
+                    <p>The first flight test of SkyLynx. We're hoping to get to orbit this flight and then deorbit over the Pacific ocean for a break apart and hard splashdown in many pieces in the Pacific ocean.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- CONTACT PAGE -->
+    <div id="contact-page" class="page">
+        <div class="page-hero">
+            <h1>Get in Touch</h1>
+            <p class="section-subtitle">Let's make your mission a reality</p>
+        </div>
+        <section style="padding-top: 2rem;">
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <div class="icon">📧</div>
+                    <h3>Email</h3>
+                    <a href="mailto:contact@booster16.space">contact@booster16.space</a>
+                </div>
+                <div class="contact-card">
+                    <div class="icon">📞</div>
+                    <h3>Phone</h3>
+                    <a href="tel:+11234567890">+1 (123) 456-7890</a>
+                </div>
+            </div>
+            <div class="response-time">
+                ⏱️ <strong>We typically respond within 24 hours</strong>
+            </div>
+            <div style="text-align: center; margin-top: 3rem;">
+                <a href="mailto:contact@booster16.space" class="cta-button">Send Us a Message</a>
+            </div>
+        </section>
     </div>
 
     <footer>
@@ -513,7 +657,7 @@
     </footer>
 
     <script>
-        // Generate stars
+        // Generate stars immediately
         const starsContainer = document.getElementById('stars');
         for (let i = 0; i < 200; i++) {
             const star = document.createElement('div');
@@ -525,241 +669,26 @@
             starsContainer.appendChild(star);
         }
 
-        // Page templates
-        const pages = {
-            home: `
-                <section class="hero">
-                    <div class="hero-bg"></div>
-                    <div class="hero-content">
-                        <h1>Beyond the Horizon</h1>
-                        <p>Advanced launch solutions for the next era of space exploration</p>
-                        <button class="cta-button" onclick="navigateTo('contact')">Get in Touch</button>
-                    </div>
-                </section>
-
-                <section id="services">
-                    <h2 class="section-title">Launch Services</h2>
-                    <p class="section-subtitle">Precision. Reliability. Innovation.</p>
-                    <div class="cards">
-                        <div class="card">
-                            <div class="card-icon">🚀</div>
-                            <h3>Heavy Lift</h3>
-                            <p>Deploy massive payloads to orbit with our next-generation heavy-lift vehicles. Optimized for large satellites, space station modules, and deep space missions.</p>
-                        </div>
-                        <div class="card">
-                            <div class="card-icon">🛰️</div>
-                            <h3>Satellite Deployment</h3>
-                            <p>Flexible launch windows and precise orbital insertion for communications, Earth observation, and scientific satellites of all sizes.</p>
-                        </div>
-                        <div class="card">
-                            <div class="card-icon">🌙</div>
-                            <h3>Deep Space Missions</h3>
-                            <p>Enabling exploration beyond Earth orbit with specialized launch profiles for lunar, Mars, and interplanetary missions.</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="technology">
-                    <h2 class="section-title">Advanced Rocket Technology</h2>
-                    <p class="section-subtitle">Engineering the impossible into reality</p>
-                    <div class="tech-grid">
-                        <div class="tech-item">
-                            <h4>Reusable Systems</h4>
-                            <div class="stat">100%</div>
-                            <p>First-stage recovery rate</p>
-                        </div>
-                        <div class="tech-item">
-                            <h4>Payload Capacity</h4>
-                            <div class="stat">75t</div>
-                            <p>To low Earth orbit</p>
-                        </div>
-                        <div class="tech-item">
-                            <h4>Launch Cadence</h4>
-                            <div class="stat">48+</div>
-                            <p>Launches per year</p>
-                        </div>
-                        <div class="tech-item">
-                            <h4>Propulsion</h4>
-                            <div class="stat">99.8%</div>
-                            <p>Engine reliability</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="research">
-                    <h2 class="section-title">Research & Development</h2>
-                    <p class="section-subtitle">Pioneering tomorrow's space technologies</p>
-                    <div class="cards">
-                        <div class="card">
-                            <div class="card-icon">🔬</div>
-                            <h3>Advanced Propulsion</h3>
-                            <p>Developing next-generation engine technologies including methane-oxygen systems and electric propulsion for deep space exploration.</p>
-                        </div>
-                        <div class="card">
-                            <div class="card-icon">🤖</div>
-                            <h3>Autonomous Systems</h3>
-                            <p>AI-driven launch sequencing, real-time trajectory optimization, and automated landing systems for maximum precision and safety.</p>
-                        </div>
-                        <div class="card">
-                            <div class="card-icon">♻️</div>
-                            <h3>Sustainable Spaceflight</h3>
-                            <p>Researching carbon-neutral propellants, in-orbit refueling technologies, and closed-loop life support systems for long-duration missions.</p>
-                        </div>
-                    </div>
-                </section>
-            `,
-            vehicles: `
-                <div class="page-hero">
-                    <h1>Our Fleet</h1>
-                    <p class="section-subtitle">Next-generation launch vehicles engineered for performance</p>
-                </div>
-                <section style="padding-top: 2rem;">
-                    <div class="cards">
-                        <div class="card">
-                            <div class="card-icon">🚀</div>
-                            <h3>Booster 16 Alpha</h3>
-                            <p><strong>Medium-lift vehicle</strong> capable of delivering 22 tons to LEO. Fully reusable first stage with rapid turnaround capabilities. Perfect for satellite constellations and ISS resupply missions.</p>
-                            <div style="margin-top: 1.5rem; color: #667eea; font-weight: 600;">
-                                Height: 70m | Diameter: 3.7m | Engines: 9
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-icon">🚀</div>
-                            <h3>Booster 16 Heavy</h3>
-                            <p><strong>Heavy-lift powerhouse</strong> with 75 tons to LEO capacity. Triple-core design with 27 engines provides unmatched thrust. Designed for deep space missions, heavy satellites, and lunar cargo delivery.</p>
-                            <div style="margin-top: 1.5rem; color: #667eea; font-weight: 600;">
-                                Height: 90m | Diameter: 3.7m | Engines: 27
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-icon">🚀</div>
-                            <h3>Booster 16 Starlight</h3>
-                            <p><strong>Next-gen super heavy</strong> currently in development. 150 ton LEO capacity with full reusability. Revolutionary methane-oxygen engines and in-orbit refueling for Mars missions.</p>
-                            <div style="margin-top: 1.5rem; color: #667eea; font-weight: 600;">
-                                Height: 120m | Diameter: 9m | Engines: 33
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            `,
-            launches: `
-                <div class="page-hero">
-                    <h1>Launch Manifest</h1>
-                    <p class="section-subtitle">Upcoming missions and recent achievements</p>
-                </div>
-                <section style="padding-top: 2rem;">
-                    <div class="cards">
-                        <div class="card">
-                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
-                                <h3>SatComm-7 Deployment</h3>
-                                <span class="mission-badge">Upcoming</span>
-                            </div>
-                            <p style="color: #667eea; margin-bottom: 0.5rem;">December 15, 2025 • Cape Canaveral</p>
-                            <p>Deploying next-generation communications satellite constellation. B16 Alpha vehicle with drone ship landing.</p>
-                        </div>
-                        <div class="card">
-                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
-                                <h3>Lunar Gateway Module</h3>
-                                <span class="mission-badge">Q1 2026</span>
-                            </div>
-                            <p style="color: #667eea; margin-bottom: 0.5rem;">January 2026 • Vandenberg SFB</p>
-                            <p>Delivering critical habitat module for Lunar Gateway station. B16 Heavy with trans-lunar injection trajectory.</p>
-                        </div>
-                        <div class="card">
-                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
-                                <h3>Mars Science Orbiter</h3>
-                                <span class="mission-badge success">Success</span>
-                            </div>
-                            <p style="color: #667eea; margin-bottom: 0.5rem;">October 28, 2025 • Cape Canaveral</p>
-                            <p>Successfully launched advanced Mars reconnaissance satellite. Perfect insertion into transfer orbit on first B16 Heavy flight.</p>
-                        </div>
-                    </div>
-                </section>
-            `,
-            contact: `
-                <div class="page-hero">
-                    <h1>Get in Touch</h1>
-                    <p class="section-subtitle">Let's make your mission a reality</p>
-                </div>
-                <section style="padding-top: 2rem;">
-                    <div class="contact-grid">
-                        <div class="contact-card">
-                            <div class="icon">📧</div>
-                            <h3>Email</h3>
-                            <a href="mailto:booster16setcorporation@gmail.com">booster16setcorporation@gmail.com</a>
-                        </div>
-                    </div>
-                    <div class="response-time">
-                        ⏱️ <strong>We typically respond within 24 hours</strong>
-                    </div>
-                    <div style="text-align: center; margin-top: 3rem;">
-                        <a href="mailto:booster16setcorporation@gmail.com" class="cta-button">Send Us a Message</a>
-                    </div>
-                </section>
-            `
-        };
-
-        // Navigation function
-        let currentPage = null;
-
-        function navigateTo(page) {
-            if (currentPage === page) return;
+        // Page navigation
+        function goToPage(pageName) {
+            // Hide all pages
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(p => p.classList.remove('active'));
             
-            const app = document.getElementById('app');
-            const menuToggle = document.getElementById('menuToggle');
-            const navLinks = document.getElementById('navLinks');
+            // Show selected page
+            const targetPage = document.getElementById(pageName + '-page');
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
             
             // Close mobile menu
+            const menuToggle = document.getElementById('menuToggle');
+            const navLinks = document.getElementById('navLinks');
             menuToggle.classList.remove('active');
             navLinks.classList.remove('active');
             
-            // Only fade if we're already on a page (not initial load)
-            if (currentPage !== null) {
-                // Fade out
-                app.classList.add('fade-out');
-                
-                setTimeout(() => {
-                    // Update content
-                    app.innerHTML = pages[page] || pages.home;
-                    currentPage = page;
-                    
-                    // Scroll to top
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                    
-                    // Fade in
-                    app.classList.remove('fade-out');
-                    
-                    // Re-observe cards
-                    observeCards();
-                }, 300);
-            } else {
-                // Initial page load - no fade
-                app.innerHTML = pages[page] || pages.home;
-                currentPage = page;
-                observeCards();
-            }
-        }
-
-        // Intersection Observer for cards
-        function observeCards() {
-            const cards = document.querySelectorAll('.card, .tech-item, .contact-card');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach((entry, index) => {
-                    if (entry.isIntersecting) {
-                        setTimeout(() => {
-                            entry.target.style.opacity = '1';
-                            entry.target.style.transform = 'translateY(0)';
-                        }, index * 100);
-                    }
-                });
-            }, { threshold: 0.1 });
-
-            cards.forEach(card => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(30px)';
-                card.style.transition = 'all 0.6s ease-out';
-                observer.observe(card);
-            });
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // Mobile menu toggle
@@ -772,14 +701,6 @@
             navLinks.classList.toggle('active');
         });
 
-        // Close menu when clicking a link
-        navLinks.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                menuToggle.classList.remove('active');
-                navLinks.classList.remove('active');
-            });
-        });
-
         // Close menu when clicking outside
         document.addEventListener('click', (e) => {
             if (!navLinks.contains(e.target) && !menuToggle.contains(e.target)) {
@@ -790,19 +711,12 @@
 
         // Navbar scroll effect
         const navbar = document.getElementById('navbar');
-        
-        // Initialize the app - FIXED: Load home page immediately
-        document.addEventListener('DOMContentLoaded', () => {
-            navigateTo('home');
-            
-            // Set up scroll effect after page loads
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 100) {
-                    navbar.classList.add('scrolled');
-                } else {
-                    navbar.classList.remove('scrolled');
-                }
-            });
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
         });
     </script>
 </body>
