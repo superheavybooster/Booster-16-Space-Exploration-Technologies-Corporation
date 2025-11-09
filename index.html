@@ -662,7 +662,7 @@
                 <div class="card">
                     <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
                         <h3>SkyLynx Flight Test 1</h3>
-                        <span class="mission-badge">Upcoming</span>
+                        <span class="mission-badge">Completed</span>
                     </div>
                     <p style="color: #667eea; margin-bottom: 0.5rem;">November 9, 2025 • Cape Canaveral</p>
                     <div class="countdown-container">
@@ -792,23 +792,41 @@
         // Countdown timer
         function updateCountdown() {
             const launchDate = new Date('November 9, 2025 12:15:00 UTC').getTime();
-    
+
             setInterval(() => {
                 const now = new Date().getTime();
                 const distance = launchDate - now;
-        
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-        
-                document.getElementById('days').textContent = String(days).padStart(2, '0');
-                document.getElementById('hours').textContent = String(hours).padStart(2, '0');
-                document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-                document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
-        
-                if (distance < 0) {
-                    document.getElementById('countdown').innerHTML = '<p style="color: #667eea; font-size: 1.5rem; font-weight: 700;">🚀 LAUNCH!</p>';
+
+                // Check if we're before or after launch
+                if (distance > 0) {
+                    // Before launch (T-minus)
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    document.getElementById('days').textContent = String(days).padStart(2, '0');
+                    document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+                    document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+                    document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+            
+                    // Update the label to show T-minus
+                    document.querySelector('.countdown-container p').textContent = 'T-minus';
+                } else {
+                    // After launch (T+plus)
+                    const elapsed = now - launchDate;
+                    const days = Math.floor(elapsed / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((elapsed % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((elapsed % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((elapsed % (1000 * 60)) / 1000);
+
+                    document.getElementById('days').textContent = String(days).padStart(2, '0');
+                    document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+                    document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+                    document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+            
+                    // Update the label to show T-plus
+                    document.querySelector('.countdown-container p').textContent = 'T+plus';
                 }
             }, 1000);
         }
