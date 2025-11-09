@@ -722,26 +722,33 @@
         }
 
         // Page navigation
-        function goToPage(pageName) {
-            // Hide all pages
-            const pages = document.querySelectorAll('.page');
-            pages.forEach(p => p.classList.remove('active'));
-            
-            // Show selected page
-            const targetPage = document.getElementById(pageName + '-page');
-            if (targetPage) {
-                targetPage.classList.add('active');
-            }
-            
-            // Close mobile menu
-            const menuToggle = document.getElementById('menuToggle');
-            const navLinks = document.getElementById('navLinks');
-            menuToggle.classList.remove('active');
-            navLinks.classList.remove('active');
-            
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+    function goToPage(pageName) {
+        // Hide all pages
+        const pages = document.querySelectorAll('.page');
+        pages.forEach(p => p.classList.remove('active'));
+        
+        // Show selected page
+        const targetPage = document.getElementById(pageName + '-page');
+        if (targetPage) {
+            targetPage.classList.add('active');
         }
+        
+        // Update URL hash (remove hash for home page)
+        if (pageName === 'home') {
+            history.pushState("", document.title, window.location.pathname + window.location.search);
+        } else {
+            window.location.hash = pageName;
+        }
+        
+        // Close mobile menu
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+        menuToggle.classList.remove('active');
+        navLinks.classList.remove('active');
+        
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
         // Mobile menu toggle
         const menuToggle = document.getElementById('menuToggle');
