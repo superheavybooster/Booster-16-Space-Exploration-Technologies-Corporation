@@ -529,7 +529,6 @@
             color: #4ecdc4;
         }
 
-        /* New styles for vehicle detail pages */
         .stage-buttons {
             display: flex;
             justify-content: center;
@@ -915,7 +914,31 @@
         <p>&copy; 2025 Booster 16 Space Exploration Technologies Corporation. All rights reserved.</p>
     </footer>
 
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script>
+        // IMPORTANT: Replace with your Firebase config
+        // Get this from: https://console.firebase.google.com/
+        const firebaseConfig = {
+            apiKey: "AIzaSyDy_TcU4_1ig_041IV1R8d6fpWcyBPYdK0",
+            authDomain: "b16setc.firebaseapp.com",
+            databaseURL: "https://b16setc-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "b16setc",
+            storageBucket: "b16setc.firebasestorage.app",
+            messagingSenderId: "271648192524",
+            appId: "1:271648192524:web:273198986a71812399d629"
+        };
+
+        // Initialize Firebase
+        let database;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+            console.log('Firebase initialized');
+        } catch (error) {
+            console.log('Firebase not configured - hold feature disabled');
+        }
+
         // Generate stars immediately
         const starsContainer = document.getElementById('stars');
         for (let i = 0; i < 200; i++) {
@@ -930,30 +953,25 @@
 
         // Page navigation
         function goToPage(pageName) {
-            // Hide all pages
             const pages = document.querySelectorAll('.page');
             pages.forEach(p => p.classList.remove('active'));
             
-            // Show selected page
             const targetPage = document.getElementById(pageName + '-page');
             if (targetPage) {
                 targetPage.classList.add('active');
             }
             
-            // Update URL hash (remove hash for home page)
             if (pageName === 'home') {
                 history.pushState("", document.title, window.location.pathname + window.location.search);
             } else {
                 window.location.hash = pageName;
             }
             
-            // Close mobile menu
             const menuToggle = document.getElementById('menuToggle');
             const navLinks = document.getElementById('navLinks');
             menuToggle.classList.remove('active');
             navLinks.classList.remove('active');
             
-            // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -967,7 +985,6 @@
             navLinks.classList.toggle('active');
         });
 
-        // Close menu when clicking outside
         document.addEventListener('click', (e) => {
             if (!navLinks.contains(e.target) && !menuToggle.contains(e.target)) {
                 menuToggle.classList.remove('active');
@@ -985,8 +1002,9 @@
             }
         });
 
-// Admin password for hold control (change this to your secret password)
-        const ADMIN_PASSWORD = 'your-secret-password-here';
+        // Admin control variables
+        const ADMIN_PASSWORD = '1'; // Change this!
+        const LAUNCH_DATE = new Date('November 13, 2025 23:59:59 UTC').getTime();
         let isAdmin = false;
         let holdStartTime = null;
         let timeAtHold = null;
@@ -1006,7 +1024,7 @@
         // Show admin control button
         function showAdminControls() {
             const existingBtn = document.getElementById('admin-hold-btn');
-            if (existingBtn) return; // Already showing
+            if (existingBtn) return;
 
             const btn = document.createElement('button');
             btn.id = 'admin-hold-btn';
@@ -1038,83 +1056,94 @@
             btn.onclick = toggleHold;
             document.body.appendChild(btn);
 
-            // Update button text based on hold status
             updateAdminButton();
         }
 
         // Update admin button text
-        async function updateAdminButton() {
+        function updateAdminButton() {
             const btn = document.getElementById('admin-hold-btn');
-            if (!btn) return;
+            if (!btn || !database) return;
 
-            try {
-                const holdData = await window.storage.get('countdown-hold', true);
-                if (holdData) {
-                    const hold = JSON.parse(holdData.value);
-                    if (hold.isHeld) {
-                        btn.textContent = 'RESUME COUNTDOWN';
-                        btn.style.background = 'linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%)';
-                    } else {
-                        btn.textContent = 'HOLD COUNTDOWN';
-                        btn.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)';
-                    }
+            database.ref('countdown-hold').once('value').then((snapshot) => {
+                const hold = snapshot.val();
+                if (hold && hold.isHeld) {
+                    btn.textContent = 'RESUME COUNTDOWN';
+                    btn.style.background = 'linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%)';
+                } else {
+                    btn.textContent = 'HOLD COUNTDOWN';
+                    btn.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)';
                 }
-            } catch (e) {
-                // No hold data yet
-            }
+            });
         }
 
-        // Listen for numpad 9 key
+        // Listen for Insert key
         document.addEventListener('keydown', (e) => {
-            // Numpad 9 has keyCode 105 or key "9" with location 3
-            if ((e.keyCode === 105 || (e.key === '9' && e.location === 3)) && !isAdmin) {
+            if ((e.key === 'Insert' || e.keyCode === 45) && !isAdmin) {
+                e.preventDefault();
                 showAdminLogin();
             }
         });
 
-        // Countdown timer with hold support
-        async function updateCountdown() {
-            const launchDate = new Date('November 13, 2025 18:45:00 UTC').getTime();
+        // Toggle hold function
+        function toggleHold() {
+            if (!isAdmin || !database) return;
 
-            // Check hold status from storage
-            async function checkHoldStatus() {
-                try {
-                    const holdData = await window.storage.get('countdown-hold', true);
-                    if (holdData) {
-                        const hold = JSON.parse(holdData.value);
-                        if (hold.isHeld) {
-                            holdStartTime = hold.holdStartTime;
-                            timeAtHold = hold.timeAtHold;
-                            return true;
-                        }
-                    }
-                    holdStartTime = null;
-                    timeAtHold = null;
-                    return false;
-                } catch (e) {
-                    return false;
+            database.ref('countdown-hold').once('value').then((snapshot) => {
+                const currentHold = snapshot.val() || { isHeld: false };
+
+                if (currentHold.isHeld) {
+                    // Resume countdown
+                    database.ref('countdown-hold').set({
+                        isHeld: false,
+                        holdStartTime: null,
+                        timeAtHold: null
+                    });
+                    console.log('Countdown resumed');
+                } else {
+                    // Hold countdown
+                    const now = new Date().getTime();
+                    const distance = LAUNCH_DATE - now;
+                    
+                    database.ref('countdown-hold').set({
+                        isHeld: true,
+                        holdStartTime: now,
+                        timeAtHold: distance
+                    });
+                    console.log('Countdown held at T-' + Math.floor(distance / 1000) + ' seconds');
                 }
+
+                updateAdminButton();
+            });
+        }
+
+        // Countdown timer with hold support
+        function updateCountdown() {
+            // Listen for hold status changes in real-time
+            if (database) {
+                database.ref('countdown-hold').on('value', (snapshot) => {
+                    const hold = snapshot.val();
+                    if (hold && hold.isHeld) {
+                        holdStartTime = hold.holdStartTime;
+                        timeAtHold = hold.timeAtHold;
+                    } else {
+                        holdStartTime = null;
+                        timeAtHold = null;
+                    }
+                });
             }
 
-            // Poll for hold status changes every 2 seconds
-            setInterval(checkHoldStatus, 2000);
-
-            setInterval(async () => {
-                const isHeld = await checkHoldStatus();
-                
+            setInterval(() => {
                 let distance;
-                if (isHeld && timeAtHold !== null) {
-                    // If held, show the frozen time
+                const isHeld = timeAtHold !== null;
+                
+                if (isHeld) {
                     distance = timeAtHold;
                 } else {
-                    // Normal countdown
                     const now = new Date().getTime();
-                    distance = launchDate - now;
+                    distance = LAUNCH_DATE - now;
                 }
 
-                // Check if we're before or after launch
                 if (distance > 0) {
-                    // Before launch (T-minus)
                     const days = Math.floor(distance / (1000 * 60 * 60 * 24));
                     const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
@@ -1125,16 +1154,13 @@
                     document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
                     document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
             
-                    // Update the label to show T-minus and hold status
                     const label = isHeld ? 'T-minus (HOLD)' : 'T-minus';
-                    document.querySelector('.countdown-container p').textContent = label;
-                    if (isHeld) {
-                        document.querySelector('.countdown-container p').style.color = '#ff6b6b';
-                    } else {
-                        document.querySelector('.countdown-container p').style.color = '#667eea';
+                    const labelEl = document.querySelector('.countdown-container p');
+                    if (labelEl) {
+                        labelEl.textContent = label;
+                        labelEl.style.color = isHeld ? '#ff6b6b' : '#667eea';
                     }
                 } else {
-                    // After launch (T+plus)
                     const elapsed = Math.abs(distance);
                     const days = Math.floor(elapsed / (1000 * 60 * 60 * 24));
                     const hours = Math.floor((elapsed % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -1146,54 +1172,20 @@
                     document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
                     document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
             
-                    // Update the label to show T-plus
-                    document.querySelector('.countdown-container p').textContent = 'T+plus';
+                    const labelEl = document.querySelector('.countdown-container p');
+                    if (labelEl) {
+                        labelEl.textContent = 'T+plus';
+                    }
                 }
             }, 1000);
         }
 
-        // Admin control functions
-        async function toggleHold() {
-            if (!isAdmin) return;
-            
-            try {
-                const holdData = await window.storage.get('countdown-hold', true);
-                let currentHold = { isHeld: false, holdStartTime: null, timeAtHold: null };
-                
-                if (holdData) {
-                    currentHold = JSON.parse(holdData.value);
-                }
-
-                if (currentHold.isHeld) {
-                    // Resume countdown
-                    await window.storage.set('countdown-hold', JSON.stringify({
-                        isHeld: false,
-                        holdStartTime: null,
-                        timeAtHold: null
-                    }), true);
-                    console.log('Countdown resumed');
-                } else {
-                    // Hold countdown
-                    const launchDate = new Date('November 13, 2025 18:45:00 UTC').getTime();
-                    const now = new Date().getTime();
-                    const distance = launchDate - now;
-                    
-                    await window.storage.set('countdown-hold', JSON.stringify({
-                        isHeld: true,
-                        holdStartTime: now,
-                        timeAtHold: distance
-                    }), true);
-                    console.log('Countdown held at T-' + Math.floor(distance / 1000) + ' seconds');
-                }
-                
-                // Update button appearance
-                updateAdminButton();
-            } catch (e) {
-                console.error('Failed to toggle hold:', e);
-            }
-        }
-
         updateCountdown();
+
+        if (window.location.hash) {
+            const hash = window.location.hash.substring(1);
+            goToPage(hash);
+        }
     </script>
 </body>
 </html>
